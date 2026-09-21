@@ -1,2 +1,2 @@
-import { GamePlatform } from "@/components/game-platform";
-export default function Home() { return <GamePlatform />; }
+import { PlatformLanding } from "@/components/platform-landing";
+export default function Home() { return <PlatformLanding />; }

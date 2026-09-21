@@ -19,6 +19,12 @@ enum MatchOutcome {
   DRAW
 }
 
+enum GameDefinitionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 model User {
   id           String   @id @default(cuid())
   username     String   @unique
@@ -33,6 +39,28 @@ model User {
   matchesAsX   Match[]    @relation("MatchX")
   matchesAsO   Match[]    @relation("MatchO")
   wonMatches   Match[]    @relation("MatchWinner")
+  gameDefinitions GameDefinition[] @relation("GameCreator")
+  roomParticipants RoomParticipant[]
+  gameEvents GameEvent[] @relation("EventActor")
+}
+
+model GameDefinition {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  category    String
+  version     Int      @default(1)
+  status      GameDefinitionStatus @default(DRAFT)
+  definition  Json
+  creatorId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+  creator     User @relation("GameCreator", fields: [creatorId], references: [id])
+  rooms       GameRoom[]
+  @@index([creatorId, status])
+  @@index([status, updatedAt])
 }
 
 model GameRoom {
@@ -48,11 +76,42 @@ model GameRoom {
   createdAt DateTime   @default(now())
   startedAt DateTime?
   finishedAt DateTime?
+  gameDefinitionId String?
   playerX User @relation("PlayerX", fields: [playerXId], references: [id])
   playerO User? @relation("PlayerO", fields: [playerOId], references: [id])
   winner  User? @relation("Winner", fields: [winnerId], references: [id])
+  gameDefinition GameDefinition? @relation(fields: [gameDefinitionId], references: [id])
+  participants RoomParticipant[]
+  events GameEvent[]
   match   Match?
   @@index([status, createdAt])
+}
+
+model RoomParticipant {
+  id       String   @id @default(cuid())
+  roomId   String
+  userId   String
+  team     String?
+  joinedAt DateTime @default(now())
+  room GameRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([roomId, userId])
+  @@index([roomId, team])
+}
+
+model GameEvent {
+  id         String   @id @default(cuid())
+  roomId     String?
+  actorId    String?
+  type       String
+  sequence   Int
+  payload    Json
+  occurredAt DateTime @default(now())
+  room GameRoom? @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  actor User? @relation("EventActor", fields: [actorId], references: [id], onDelete: SetNull)
+  @@unique([roomId, sequence])
+  @@index([type, occurredAt])
+  @@index([actorId, occurredAt])
 }
 
 model Match {

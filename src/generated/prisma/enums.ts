@@ -25,3 +25,12 @@ export const MatchOutcome = {
 } as const
 
 export type MatchOutcome = (typeof MatchOutcome)[keyof typeof MatchOutcome]
+
+
+export const GameDefinitionStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type GameDefinitionStatus = (typeof GameDefinitionStatus)[keyof typeof GameDefinitionStatus]

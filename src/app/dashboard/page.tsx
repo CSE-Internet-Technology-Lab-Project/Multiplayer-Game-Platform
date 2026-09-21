@@ -1,5 +1,5 @@
-import { GamePlatform } from "@/components/game-platform";
+import { PlayerGameHub } from "@/components/player-game-hub";
 
 export default function DashboardPage() {
-  return <GamePlatform />;
+  return <PlayerGameHub />;
 }

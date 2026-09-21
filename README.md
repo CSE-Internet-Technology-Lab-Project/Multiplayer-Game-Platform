@@ -22,3 +22,17 @@ Vercel functions cannot host a persistent Socket.IO server, so the dedicated soc
 - The socket server validates player membership, turn order, board cells, wins, and draws.
 - A win is worth 3 points; a draw awards 1 point to each player.
 - Completed matches are persisted and feed the leaderboard and personal analytics.
+
+## Platform foundation
+
+Authenticated creators can open `http://localhost:3000/creator` to create and publish declarative game definitions. A definition contains a slug, category, player/team limits, rules, winning conditions, and scoring policy as structured JSON. Executable game code is intentionally not uploaded; each game type is implemented behind a reviewed server-side adapter.
+
+The platform APIs are:
+
+- `GET/POST /api/games` to discover published games or create creator drafts.
+- `GET /api/games/:id` to read a published definition or the creator's own draft.
+- `POST /api/games/:id/publish` to publish a creator-owned draft.
+- `GET /api/events` to read the authenticated player's recent domain events.
+- `POST /api/rooms` optionally accepts `{ "gameDefinitionId": "..." }` for a published game.
+
+Rooms now persist participants with optional team assignments and append domain events such as `ROOM_CREATED`, `PLAYER_JOINED`, `MOVE_PLAYED`, and `MATCH_FINISHED`. This gives the Socket.IO process a stable event-driven boundary while PostgreSQL remains the source of truth.

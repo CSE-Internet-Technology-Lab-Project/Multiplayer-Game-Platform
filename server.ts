@@ -2,7 +2,7 @@ import "dotenv/config";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 import { userIdFromToken } from "./src/lib/auth";
-import { getRoom, joinRoom, makeMove } from "./src/lib/room-service";
+import { getRoom, joinRoom, makeGameAction, makeMove } from "./src/lib/room-service";
 
 const httpServer = createServer();
 const configuredOrigins = process.env.NEXT_PUBLIC_APP_ORIGIN?.split(",").map((origin) => origin.trim()).filter(Boolean) ?? [];
@@ -23,5 +23,6 @@ io.on("connection", (socket) => {
   socket.on("room:join", async (roomId: string) => { try { const room = await joinRoom(roomId, socket.data.userId); socket.join(roomId); io.to(roomId).emit("game:state", room); } catch (error) { socket.emit("game:error", error instanceof Error ? error.message : "Unable to join room"); } });
   socket.on("room:watch", async (roomId: string) => { const room = await getRoom(roomId); if (room) { socket.join(roomId); socket.emit("game:state", room); } });
   socket.on("game:move", async ({ roomId, cell }: { roomId: string; cell: number }) => { try { const room = await makeMove(roomId, socket.data.userId, cell); io.to(roomId).emit("game:state", room); } catch (error) { socket.emit("game:error", error instanceof Error ? error.message : "Move rejected"); } });
+  socket.on("game:action", async ({ roomId, type, payload }: { roomId: string; type: string; payload?: Record<string, unknown> }) => { try { const room = await makeGameAction(roomId, socket.data.userId, { type, payload: payload || {} }); io.to(roomId).emit("game:state", room); } catch (error) { socket.emit("game:error", error instanceof Error ? error.message : "Action rejected"); } });
 });
 httpServer.listen(Number(process.env.SOCKET_PORT || 4000), () => console.log(`Socket.IO listening on ${process.env.SOCKET_PORT || 4000}`));

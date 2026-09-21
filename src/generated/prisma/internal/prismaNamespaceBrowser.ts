@@ -52,7 +52,10 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  GameDefinition: 'GameDefinition',
   GameRoom: 'GameRoom',
+  RoomParticipant: 'RoomParticipant',
+  GameEvent: 'GameEvent',
   Match: 'Match'
 } as const
 
@@ -85,6 +88,24 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const GameDefinitionScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  version: 'version',
+  status: 'status',
+  definition: 'definition',
+  creatorId: 'creatorId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  publishedAt: 'publishedAt'
+} as const
+
+export type GameDefinitionScalarFieldEnum = (typeof GameDefinitionScalarFieldEnum)[keyof typeof GameDefinitionScalarFieldEnum]
+
+
 export const GameRoomScalarFieldEnum = {
   id: 'id',
   code: 'code',
@@ -97,10 +118,35 @@ export const GameRoomScalarFieldEnum = {
   winnerId: 'winnerId',
   createdAt: 'createdAt',
   startedAt: 'startedAt',
-  finishedAt: 'finishedAt'
+  finishedAt: 'finishedAt',
+  gameDefinitionId: 'gameDefinitionId'
 } as const
 
 export type GameRoomScalarFieldEnum = (typeof GameRoomScalarFieldEnum)[keyof typeof GameRoomScalarFieldEnum]
+
+
+export const RoomParticipantScalarFieldEnum = {
+  id: 'id',
+  roomId: 'roomId',
+  userId: 'userId',
+  team: 'team',
+  joinedAt: 'joinedAt'
+} as const
+
+export type RoomParticipantScalarFieldEnum = (typeof RoomParticipantScalarFieldEnum)[keyof typeof RoomParticipantScalarFieldEnum]
+
+
+export const GameEventScalarFieldEnum = {
+  id: 'id',
+  roomId: 'roomId',
+  actorId: 'actorId',
+  type: 'type',
+  sequence: 'sequence',
+  payload: 'payload',
+  occurredAt: 'occurredAt'
+} as const
+
+export type GameEventScalarFieldEnum = (typeof GameEventScalarFieldEnum)[keyof typeof GameEventScalarFieldEnum]
 
 
 export const MatchScalarFieldEnum = {

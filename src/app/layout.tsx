@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Gridline | Multiplayer Tic-Tac-Toe",
-  description: "A real-time Tic-Tac-Toe game platform.",
+  title: "Gridline | Multiplayer Game Platform",
+  description: "Play, create, and grow multiplayer games together.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
