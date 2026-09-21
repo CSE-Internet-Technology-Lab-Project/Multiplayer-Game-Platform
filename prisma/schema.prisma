@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RoomStatus {
+  WAITING
+  ACTIVE
+  FINISHED
+}
+
+enum MatchOutcome {
+  X_WIN
+  O_WIN
+  DRAW
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  score        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  roomsAsX     GameRoom[] @relation("PlayerX")
+  roomsAsO     GameRoom[] @relation("PlayerO")
+  wins         GameRoom[] @relation("Winner")
+  matchesAsX   Match[]    @relation("MatchX")
+  matchesAsO   Match[]    @relation("MatchO")
+  wonMatches   Match[]    @relation("MatchWinner")
+}
+
+model GameRoom {
+  id        String     @id @default(cuid())
+  code      String     @unique
+  gameType  String     @default("TIC_TAC_TOE")
+  status    RoomStatus @default(WAITING)
+  board     Json       @default("[null,null,null,null,null,null,null,null,null]")
+  turn      String     @default("X")
+  playerXId String
+  playerOId String?
+  winnerId  String?
+  createdAt DateTime   @default(now())
+  startedAt DateTime?
+  finishedAt DateTime?
+  playerX User @relation("PlayerX", fields: [playerXId], references: [id])
+  playerO User? @relation("PlayerO", fields: [playerOId], references: [id])
+  winner  User? @relation("Winner", fields: [winnerId], references: [id])
+  match   Match?
+  @@index([status, createdAt])
+}
+
+model Match {
+  id          String       @id @default(cuid())
+  roomId      String       @unique
+  playerXId   String
+  playerOId   String
+  winnerId    String?
+  outcome     MatchOutcome
+  moves       Int
+  completedAt DateTime     @default(now())
+  room    GameRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  playerX User     @relation("MatchX", fields: [playerXId], references: [id])
+  playerO User     @relation("MatchO", fields: [playerOId], references: [id])
+  winner  User?    @relation("MatchWinner", fields: [winnerId], references: [id])
+  @@index([completedAt])
+}
