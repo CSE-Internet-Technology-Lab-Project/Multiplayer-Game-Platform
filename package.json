@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:all": "sh -c 'npm run dev & npm run socket & wait'",
+    "dev": "sh -c 'npm run socket > /tmp/gridline-socket.log 2>&1 & next dev'",
+    "dev:all": "npm run dev",
     "build": "prisma generate && next build --webpack",
     "start": "next start",
     "socket": "tsx server.ts",

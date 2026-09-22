@@ -7,7 +7,7 @@ The MVP is a modular-monolith game platform: Next.js owns the browser UI and HTT
 1. Copy `.env.example` to `.env` and change `AUTH_SECRET`.
 2. Start PostgreSQL: `docker compose up -d postgres`.
 3. Create the schema: `npm run db:migrate -- --name init`.
-4. In separate terminals run `npm run dev` and `npm run socket`.
+4. Start the app with `npm run dev` — this launches both the Next.js UI and the real-time socket service together.
 5. Open `http://localhost:3000` in two browsers (or two physical machines) and register two users.
 
 ## Deployment
