@@ -13,7 +13,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  socket:
+  app:
     build:
       context: .
       dockerfile: Dockerfile.socket
@@ -21,8 +21,12 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/multiplayer_games
       AUTH_SECRET: ${AUTH_SECRET:-development-only-change-me}
       NEXT_PUBLIC_APP_ORIGIN: ${NEXT_PUBLIC_APP_ORIGIN:-http://localhost:3000}
+      NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL:-http://localhost:4000}
       SOCKET_PORT: 4000
+      PORT: 3000
+      NODE_ENV: production
     ports:
+      - "3000:3000"
       - "4000:4000"
     depends_on:
       - postgres
